@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leo Index · Leo's Gyros · vodič kroz aplikaciju</title>
+<meta name="description" content="Kako rade aplikacije za online poručivanje napravljene za Leo Index i Leo's Gyros: gost, kuhinja, vlasnik.">
+<meta name="theme-color" content="#2B120A">
+<link rel="icon" href="favicon.png">
+<meta property="og:title" content="Leo Index i Leo's Gyros · Vaše aplikacije za poručivanje">
+<meta property="og:description" content="Vodič kroz sistem: kako gost poručuje, kako kuhinja prima porudžbine i šta vlasnik vidi. Dva brenda, jedan sistem.">
+<meta property="og:image" content="https://gajicmladen.github.io/leo-vodic/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<style>
+/* self-hosted display fonts (latin + latin-ext for Serbian diacritics), the same files as the two apps */
+@font-face{font-family:'Rubik ExtraBold Italic';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/rubik-800i-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Rubik ExtraBold Italic';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/rubik-800i-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Russo One';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/russo-one-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Russo One';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/russo-one-latin.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+  /* the two brands: Leo Index = logo red + espresso, Leo's Gyros = Greek blue + navy; the sun yellow is shared */
+  :root{--bg:#FFF9EE;--card:#FFFFFF;--inset:#FBEFD3;--line:#EEDDBC;--yellow:#F8C21F;--on-yellow:#2C140B;--ink:#2C140B;--ink2:#6A5547;
+    --li:#D7141A;--li-dark:#2B120A;--li-card:#3E1B0F;--lg:#0A84BC;--lg-dark:#06243D;--lg-card:#0A3352;--cream:#FFF9EE;
+    --display:"Rubik ExtraBold Italic","Arial Black",Impact,sans-serif;--greek:"Russo One","Arial Black",sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:17px}
+  .wrap{max-width:680px;margin:0 auto;padding:0 20px}
+  h1,h2,.big{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:0;line-height:1.04}
+  h1{font-size:clamp(30px,8.2vw,50px)}
+  h2{font-size:clamp(23px,6vw,34px);margin-bottom:10px}
+  h3{font-size:19px;font-weight:800;line-height:1.2}
+  p{color:var(--ink2)}
+  .eyebrow{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-bottom:8px}
+  .lead{font-size:19px;color:var(--ink)}
+  .dark{color:var(--cream)}
+  .dark.li-bg{background:var(--li-dark)}
+  .dark.lg-bg{background:var(--lg-dark)}
+  .dark p,.dark li{color:var(--cream);opacity:.84}
+  .dark .lead{opacity:1}
+  .dark .eyebrow{color:var(--yellow);opacity:1}
+  .alt{background:var(--inset)}
+  section{padding:40px 0}
+
+  /* hero */
+  header.hero{padding:40px 0 34px;color:var(--cream);background:linear-gradient(165deg,var(--li-dark) 0%,var(--li-dark) 38%,#141826 70%,var(--lg-dark) 100%)}
+  header.hero p{color:var(--cream);opacity:.84}
+  header.hero .lead{opacity:1}
+  header.hero .eyebrow{color:var(--yellow);opacity:1}
+  .duo{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+  .duo img{width:54px;height:54px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.14)}
+  .duo img+img{margin-left:-18px}
+  .duo span{font-size:13px;font-weight:600;opacity:.8;margin-left:4px}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .pill{background:var(--yellow);color:var(--on-yellow);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700}
+  .brands{display:grid;gap:14px;margin-top:24px}
+  .bc{border-radius:22px;overflow:hidden;box-shadow:0 18px 40px -22px rgba(0,0,0,.7)}
+  .bc.li{background:var(--li-card)}
+  .bc.lg{background:var(--lg-card)}
+  .bc .band{height:58px}
+  .bc.li .band{background:repeating-conic-gradient(from -90deg at 50% 100%,rgba(255,255,255,.26) 0deg 7deg,transparent 7deg 14deg),#F7C21B}
+  .bc.lg .band{background:url(img/meander.webp) 0 0/24px 36px repeat,#FCEFCB}
+  .bc .body{padding:0 18px 18px;margin-top:-34px}
+  .bc .logo{width:70px;height:70px;border-radius:50%;background:#fff;display:block}
+  .bc.li .logo{box-shadow:0 0 0 4px var(--li-card)}
+  .bc.lg .logo{box-shadow:0 0 0 4px var(--lg-card)}
+  .bc .name{font-size:25px;line-height:1.05;margin:12px 0 4px;color:#fff;text-transform:uppercase}
+  .bc.li .name{font-family:var(--display);font-weight:800}
+  .bc.lg .name{font-family:var(--greek);letter-spacing:.01em}
+  .bc p{font-size:14px}
+  .bc .btns{margin-top:14px}
+
+  .btns{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;border-radius:16px;font-weight:700;text-decoration:none;font-size:16px;text-align:center}
+  .btn-li{background:var(--li);color:#fff}
+  .btn-lg{background:var(--lg);color:#fff}
+  .btn-yellow{background:var(--yellow);color:var(--on-yellow)}
+  .btn-ghost{background:transparent;color:var(--cream);border:2px solid color-mix(in srgb,var(--cream) 36%,transparent)}
+  .btn-line{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+  .small{font-size:13px}
+
+  .toc{display:flex;gap:8px;overflow-x:auto;padding:12px 20px;scrollbar-width:none;background:var(--bg);position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line)}
+  .toc::-webkit-scrollbar{display:none}
+  .toc a{white-space:nowrap;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--ink);text-decoration:none}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--yellow);color:var(--on-yellow);font-family:var(--display);font-weight:800;font-size:18px;margin-bottom:10px}
+  ul{padding-left:20px;margin:12px 0 0}
+  li{color:var(--ink2);margin-bottom:6px}
+  b{font-weight:700;color:inherit}
+
+  /* screenshots */
+  .strip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:18px 20px 6px;margin:0 -20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .strip::-webkit-scrollbar{display:none}
+  .shot{flex:0 0 72%;max-width:300px;scroll-snap-align:center}
+  .shot img{width:100%;height:auto;border-radius:22px;display:block;background:var(--inset);box-shadow:0 10px 30px -14px rgba(0,0,0,.45)}
+  .shot p{font-size:13px;margin-top:8px;text-align:center}
+  .tab{margin-top:18px}
+  .tab img{width:100%;height:auto;border-radius:14px;display:block;cursor:zoom-in;box-shadow:0 10px 30px -14px rgba(0,0,0,.5)}
+  .tab p{font-size:13px;margin-top:8px}
+  .tag{display:inline-block;font-size:10.5px;line-height:1.5;letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:1px 8px;color:#fff;vertical-align:1px;margin-right:5px;white-space:nowrap}
+  .tag.li{background:var(--li);font-family:var(--display);font-weight:800}
+  .tag.lg{background:var(--lg);font-family:var(--greek)}
+  .dark .tag{box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+  .hint{font-size:12px;color:var(--ink2);margin-top:10px}
+  .dark .hint{color:var(--cream);opacity:.7}
+
+  .steps,.cards{display:grid;gap:12px;margin-top:18px}
+  .step{background:var(--inset);border-radius:18px;padding:18px}
+  .dark .step{background:color-mix(in srgb,var(--cream) 10%,transparent)}
+  .step .big{font-size:34px;color:var(--yellow);line-height:1}
+  .step h3,.card h3{margin:4px 0 6px}
+  .step p,.card p{font-size:15px}
+  .card{background:var(--card);border-radius:18px;padding:18px;border:1px solid var(--line)}
+  .card.li{border-top:4px solid var(--li)}
+  .card.lg{border-top:4px solid var(--lg)}
+  a{color:var(--li)}
+  footer{padding:30px 0 60px;font-size:13px;color:var(--ink2)}
+  .lb{position:fixed;inset:0;background:rgba(10,10,10,.96);display:none;z-index:50;overflow:auto;-webkit-overflow-scrolling:touch}
+  .lb.on{display:block}
+  .lb img{display:block;width:auto;max-width:none;min-width:100%;margin:0 auto}
+  .lb .close{position:fixed;top:14px;right:14px;background:#fff;color:#111;border:0;border-radius:999px;padding:10px 16px;font-weight:700;font-size:15px;z-index:51}
+  @media (min-width:700px){.brands,.steps,.cards{grid-template-columns:1fr 1fr}.btns.row{flex-direction:row}.btns.row .btn{flex:1}.shot{flex-basis:46%}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="duo"><img src="img/logo-li.webp" alt="Leo Index"><img src="img/logo-lg.webp" alt="Leo's Gyros"><span>Napravljeno za Leo Index i Leo's Gyros</span></div>
+    <p class="eyebrow">Vodič kroz sistem</p>
+    <h1>Vaše dve aplikacije za online poručivanje</h1>
+    <p class="lead" style="margin-top:14px">Dva brenda, svaki u svojim bojama, a iza oba isti sistem. Gost poruči sa telefona za minut. Kuhinja vidi porudžbinu istog trenutka.</p>
+    <div class="pills"><span class="pill">Gost: telefon</span><span class="pill">Kuhinja: tablet ili telefon</span><span class="pill">Vlasnik: statistika i meni</span></div>
+    <div class="brands">
+      <div class="bc li">
+        <div class="band"></div>
+        <div class="body">
+          <img class="logo" src="img/logo-li.webp" alt="">
+          <p class="name">Leo Index</p>
+          <p>Index sendviči, tortilje, roštilj, kobasice, knedle</p>
+          <div class="btns">
+            <a class="btn btn-li" href="https://gajicmladen.github.io/leo-index/">Probajte kao gost</a>
+            <a class="btn btn-ghost" href="https://gajicmladen.github.io/leo-index/kuhinja">Ekran kuhinje</a>
+          </div>
+        </div>
+      </div>
+      <div class="bc lg">
+        <div class="band"></div>
+        <div class="body">
+          <img class="logo" src="img/logo-lg.webp" alt="">
+          <p class="name">Leo's Gyros</p>
+          <p>Giros mali, veliki i jumbo, burek, krilca, knedle</p>
+          <div class="btns">
+            <a class="btn btn-lg" href="https://gajicmladen.github.io/leos-gyros/">Probajte kao gost</a>
+            <a class="btn btn-ghost" href="https://gajicmladen.github.io/leos-gyros/kuhinja">Ekran kuhinje</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="small" style="margin-top:18px">Ovo su demo verzije sa Vašim menijima i fotografijama. Slobodno poručite: porudžbina ostaje samo na Vašem telefonu i niko je ne dobija. Zatim u istom pregledaču otvorite kuhinju tog brenda i videćete kako stiže.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#kako">Kako radi</a><a href="#brendovi">Dva brenda</a><a href="#gost">Gost</a><a href="#korpa">Korpa</a><a href="#dostava">Dostava</a><a href="#placanje">Plaćanje</a><a href="#pracenje">Praćenje</a><a href="#kuhinja">Kuhinja</a><a href="#danas">Danas</a><a href="#statistika">Statistika</a><a href="#meni">Meni</a><a href="#kurir">Dostavljač</a><a href="#dalje">Dalje</a>
+</nav>
+
+<section id="kako">
+  <div class="wrap">
+    <p class="eyebrow">Kako radi</p>
+    <h2>Tri ekrana, jedan tok</h2>
+    <p>Gost poruči, kuhinja prihvati, gost prati. Nema poziva, nema prepisivanja adrese.</p>
+    <div class="strip">
+      <div class="shot"><img src="img/li-home-added.jpg" alt="Gost dodaje u korpu" loading="lazy"><p><b>1 · Gost</b> otvori link, izabere i doda u korpu</p></div>
+      <div class="shot"><img src="img/lg-kuhinja-tel.jpg" alt="Kuhinja na telefonu" loading="lazy"><p><b>2 · Kuhinja</b> čuje zvono, prihvati i zada vreme</p></div>
+      <div class="shot"><img src="img/lg-status2.jpg" alt="Gost prati status" loading="lazy"><p><b>3 · Gost</b> uživo vidi: u pripremi, spremna, na putu</p></div>
+    </div>
+    <p class="hint">← prevucite slike levo-desno →</p>
+  </div>
+</section>
+
+<section id="brendovi" class="alt">
+  <div class="wrap">
+    <p class="eyebrow">Dva brenda, jedan sistem</p>
+    <h2>Svaki brend svoja aplikacija, isti tok</h2>
+    <p>Leo Index i Leo's Gyros imaju svaki svoj link, svoj meni, logo i boje. Iza oba je isti sistem: isto poručivanje, ista kuhinjska tabla i ista statistika, odvojeno po brendu.</p>
+    <div class="strip">
+      <div class="shot"><img src="img/li-home.jpg" alt="Leo Index, početni ekran" loading="lazy"><p><span class="tag li">Leo Index</span> index sendvič, mali ili veliki</p></div>
+      <div class="shot"><img src="img/lg-home.jpg" alt="Leo's Gyros, početni ekran" loading="lazy"><p><span class="tag lg">Leo's Gyros</span> giros, mali, veliki ili jumbo</p></div>
+    </div>
+    <ul>
+      <li>Gost koji dođe po index vidi samo Leo Index, a gost koji dođe po giros samo Leo's Gyros: bez mešanja menija i korpi</li>
+      <li>Svaki brend ima svoj ekran kuhinje i svoju statistiku, pa se uvek zna šta je prodao koji brend</li>
+      <li>Ono što je zajedničko podešeno je isto za oba: adresa u Gajevoj 1, dostava i plaćanje</li>
+    </ul>
+  </div>
+</section>
+
+<section id="gost">
+  <div class="wrap">
+    <span class="num">1</span>
+    <p class="eyebrow">Gost · prvo otvaranje i meni</p>
+    <h2>Vodič u tri koraka, pa meni na jedan ekran</h2>
+    <p>Novog gosta dočeka kratak vodič. Kasnije je dostupan iz dugmeta „?“.</p>
+    <div class="strip">
+      <div class="shot"><img src="img/li-tut1.jpg" alt="Vodič korak 1" loading="lazy"><p>Prevuci levo ili desno: tako se lista meni</p></div>
+      <div class="shot"><img src="img/li-tut2.jpg" alt="Vodič korak 2" loading="lazy"><p>Mali ili veliki: cena se menja odmah</p></div>
+      <div class="shot"><img src="img/li-tut3.jpg" alt="Vodič korak 3" loading="lazy"><p>Dovrši narudžbinu: gotovo za minut</p></div>
+      <div class="shot"><img src="img/li-home-added.jpg" alt="Dodato u korpu" loading="lazy"><p>Brojač na korpi i dugme sa iznosom</p></div>
+    </div>
+    <ul>
+      <li>Ceo Vaš meni sa Wolta, po kategorijama, sa Vašim fotografijama, sastojcima i cenama</li>
+      <li>Veličine tamo gde menjaju cenu: index Mali ili Veliki, giros Mali, Veliki ili Jumbo, kobasice 110 ili 220 g, salata sa piletinom</li>
+      <li>Oznake: Preporuka, specijalitet kuće, ljutina; akcijska cena sa precrtanom redovnom</li>
+      <li><b>Početni ekran prilagođavamo Vašim željama</b>: redosled, istaknuti proizvod, akcija dana</li>
+    </ul>
+  </div>
+</section>
+
+<section id="korpa" class="alt">
+  <div class="wrap">
+    <span class="num">2</span>
+    <p class="eyebrow">Gost · korpa</p>
+    <h2>Napomena po stavci, piće i knedle uz porudžbinu</h2>
+    <div class="strip">
+      <div class="shot"><img src="img/li-korpa.jpg" alt="Korpa" loading="lazy"><p><span class="tag li">Leo Index</span> plus/minus, brisanje, koraci 1-2-3 na vrhu</p></div>
+      <div class="shot"><img src="img/li-korpa-note.jpg" alt="Napomena" loading="lazy"><p><span class="tag li">Leo Index</span> kifla ili tortilja, premazi, salate: gost upiše u napomenu</p></div>
+      <div class="shot"><img src="img/lg-korpa-extras.jpg" alt="Piće i knedle u korpi" loading="lazy"><p><span class="tag lg">Leo's Gyros</span> „Nešto za piće?“ i „Nešto slatko?“</p></div>
+    </div>
+    <p>Napomena stiže kuhinji istaknuta na kartici, uz stavku na koju se odnosi. Piće i knedle ne zatrpavaju početni ekran: nude se u korpi, tri predloga i cela ponuda na jedan dodir. Korpa se pamti i kad gost zatvori aplikaciju.</p>
+  </div>
+</section>
+
+<section id="dostava">
+  <div class="wrap">
+    <span class="num">3</span>
+    <p class="eyebrow">Gost · dostava ili preuzimanje</p>
+    <h2>Adresa jednom, bez diktiranja preko telefona</h2>
+    <div class="strip">
+      <div class="shot"><img src="img/lg-dostava-full.jpg" alt="Forma za dostavu" loading="lazy"><p><span class="tag lg">Leo's Gyros</span> <b>Dostava</b>: ime, telefon, adresa, sprat/stan, napomena</p></div>
+      <div class="shot"><img src="img/lg-preuzimanje.jpg" alt="Preuzimanje" loading="lazy"><p><span class="tag lg">Leo's Gyros</span> <b>Preuzimanje</b>: samo ime i telefon; gost vidi adresu i radno vreme</p></div>
+    </div>
+    <p>Zone i način dostave podešavamo po Vašem. Za svaki brend birate: samo preuzimanje, samo dostava ili oboje.</p>
+  </div>
+</section>
+
+<section id="placanje" class="alt">
+  <div class="wrap">
+    <span class="num">4</span>
+    <p class="eyebrow">Gost · plaćanje i potvrda</p>
+    <h2>Gotovina ili kartica na POS-u, bez registracije</h2>
+    <div class="strip">
+      <div class="shot"><img src="img/li-placanje.jpg" alt="Plaćanje" loading="lazy"><p><span class="tag li">Leo Index</span> pregled stavki sa napomenama, adrese i ukupnog iznosa</p></div>
+    </div>
+    <p>Jedno dugme „Poruči“, bez naloga i lozinki. Plaćanje karticom na terminalu ili online plaćanje uključujemo kad Vam odgovara.</p>
+  </div>
+</section>
+
+<section id="pracenje">
+  <div class="wrap">
+    <span class="num">5</span>
+    <p class="eyebrow">Gost · praćenje porudžbine</p>
+    <h2>Gost vidi status uživo i ne zove da pita „gde je hrana“</h2>
+    <div class="strip">
+      <div class="shot"><img src="img/lg-status1.jpg" alt="Status primljena" loading="lazy"><p>Broj porudžbine, čeka se potvrda kuhinje</p></div>
+      <div class="shot"><img src="img/lg-status-priprema.jpg" alt="Status u pripremi" loading="lazy"><p>Kuhinja prihvatila: gost vidi kada je gotovo</p></div>
+      <div class="shot"><img src="img/lg-status2.jpg" alt="Status na putu" loading="lazy"><p>Primljena → U pripremi → Spremna → Na putu</p></div>
+    </div>
+    <p>Status se menja istog trenutka kad kuhinja dodirne dugme.</p>
+  </div>
+</section>
+
+<section id="kuhinja" class="dark li-bg">
+  <div class="wrap">
+    <span class="num">6</span>
+    <p class="eyebrow">Kuhinja · tablet ili telefon</p>
+    <h2>Tabla: Nove, U pripremi, Spremne</h2>
+    <p>Sve što kuhinja treba da zna na jednom ekranu. Nova porudžbina zvoni dok se ne prihvati.</p>
+    <div class="tab"><img src="img/li-kuhinja-tablet.jpg" alt="Kuhinja na tabletu" data-zoom loading="lazy"><p><span class="tag li">Leo Index</span> Tablet: tri kolone. Kartica = broj, vreme, dostava/preuzimanje, stavke sa veličinom i napomenom, kupac, adresa, iznos.</p></div>
+    <p class="hint">Dodirnite sliku za uvećanje</p>
+    <div class="tab"><img src="img/lg-kuhinja-prihvacena.jpg" alt="Prihvaćena porudžbina" data-zoom loading="lazy"><p><span class="tag lg">Leo's Gyros</span> <b>Prihvati · gotova za 20 min</b>: kartica prelazi u „U pripremi“, gost dobija vreme.</p></div>
+    <div class="tab"><img src="img/li-kuhinja-ceka.jpg" alt="Spremna porudžbina" data-zoom loading="lazy"><p><span class="tag li">Leo Index</span> <b>Spremna</b> → „Predato dostavljaču“ ili „Preuzeto“. Završene se slažu u dnu.</p></div>
+    <div class="strip">
+      <div class="shot"><img src="img/lg-kuhinja-tel.jpg" alt="Kuhinja na telefonu" loading="lazy"><p><span class="tag lg">Leo's Gyros</span> ista tabla na običnom telefonu</p></div>
+      <div class="shot"><img src="img/li-podesavanja.jpg" alt="Podešavanja kuhinje" loading="lazy"><p><span class="tag li">Leo Index</span> vreme pripreme, zvuk, obaveštenja</p></div>
+    </div>
+    <ul>
+      <li>Isti podaci na svim uređajima u isto vreme: tablet u kuhinji, telefon kod vlasnika</li>
+      <li>„Dodaj na početni ekran“: aplikacija „Kuhinja“ preko celog ekrana, ekran ostaje upaljen</li>
+      <li>Zvono: 5 tonova, ponavljanje na 10 s dok se ne prihvati; dugmad za vreme pripreme po meri</li>
+    </ul>
+  </div>
+</section>
+
+<section id="danas" class="alt">
+  <div class="wrap">
+    <span class="num">7</span>
+    <p class="eyebrow">Kuhinja · „Danas“</p>
+    <h2>Danas ne radimo ili je nešto nestalo: jedan prekidač</h2>
+    <div class="strip">
+      <div class="shot"><img src="img/li-danas.jpg" alt="Panel Danas" loading="lazy"><p><span class="tag li">Leo Index</span> „Primamo porudžbine“ i posebno Mali / Veliki</p></div>
+    </div>
+    <p>Važi odmah za sve goste, u ponoć se samo vraća. Ako jedne veličine nestane, gost je vidi precrtanu sa „Rasprodato“ i bira drugu.</p>
+  </div>
+</section>
+
+<section id="statistika">
+  <div class="wrap">
+    <span class="num">8</span>
+    <p class="eyebrow">Vlasnik · istorija i statistika</p>
+    <h2>Brojke koje vlasnik hoće da zna, bez Excela</h2>
+    <div class="tab"><img src="img/lg-istorija.jpg" alt="Istorija narudžbina" data-zoom loading="lazy"><p><span class="tag lg">Leo's Gyros</span> <b>Istorija</b> po danu: sve / završene / otkazane, promet, prosečno vreme pripreme.</p></div>
+    <div class="tab"><img src="img/li-statistika.jpg" alt="Statistika" data-zoom loading="lazy"><p><span class="tag li">Leo Index</span> <b>Statistika</b> za period: promet, najtraženiji artikli i veličine, špic sati, posete sajtu i koliko poseta postane narudžbina.</p></div>
+    <p class="hint">Dodirnite sliku za uvećanje</p>
+  </div>
+</section>
+
+<section id="meni" class="alt">
+  <div class="wrap">
+    <span class="num">9</span>
+    <p class="eyebrow">Vlasnik · meni editor</p>
+    <h2>Meni menjate sami za minut</h2>
+    <div class="strip">
+      <div class="shot"><img src="img/li-meni-lista.jpg" alt="Lista proizvoda" loading="lazy"><p><span class="tag li">Leo Index</span> redosled prevlačenjem, „Novi proizvod“, svaka promena se čuva odmah</p></div>
+      <div class="shot"><img src="img/lg-meni-izmena.jpg" alt="Izmena proizvoda" loading="lazy"><p><span class="tag lg">Leo's Gyros</span> fotografija, sastojci, cena po veličini, oznake, akcija sa rokom</p></div>
+    </div>
+    <p>Nova cena, nova slika ili akcija vikendom: promena je odmah kod svih gostiju, bez programera. Svaki brend ima svoj meni.</p>
+  </div>
+</section>
+
+<section id="kurir" class="dark lg-bg">
+  <div class="wrap">
+    <span class="num">10</span>
+    <p class="eyebrow">Dostava · Vaš dostavljač</p>
+    <h2>Radi sa Vašim vozačima ili sa kurirskom službom</h2>
+    <div class="steps">
+      <div class="step"><div class="big">1</div><h3>Prihvati</h3><p>Kuhinja prihvati porudžbinu za dostavu i zada vreme.</p></div>
+      <div class="step"><div class="big">2</div><h3>Vozač zna sve</h3><p>Adresa, telefon, stavke i iznos za naplatu idu vozaču jednim dodirom (Viber, WhatsApp, SMS) ili automatski mejlom kurirskoj službi.</p></div>
+      <div class="step"><div class="big">3</div><h3>Na putu</h3><p>„Predato dostavljaču“ i gost vidi da je hrana krenula.</p></div>
+    </div>
+    <div class="strip"><div class="shot"><img src="img/lg-prosledi.jpg" alt="Prosleđivanje vozaču" loading="lazy"><p><span class="tag lg">Leo's Gyros</span> Kopiraj · Viber · WhatsApp · SMS</p></div></div>
+    <p>Ko vozi, dogovaramo zajedno: Vaši vozači, služba sa kojom već radite ili partner koga predložimo.</p>
+  </div>
+</section>
+
+<section id="brend">
+  <div class="wrap">
+    <p class="eyebrow">Po meri Vaših lokala</p>
+    <h2>Vaši domeni, Vaši logoi, Vaše boje</h2>
+    <div class="cards">
+      <div class="card li"><h3>Brend</h3><p>Logo, boje, font i poruke statusa su Vaši, kao u ovim demo verzijama. Svaki brend na svom domenu, tipa imebrenda.rs.</p></div>
+      <div class="card lg"><h3>Pored Wolta</h3><p>Wolt ostaje gde jeste. Ovo je Vaš kanal bez provizije: gost koji Vas već zna poručuje direktno kod Vas.</p></div>
+      <div class="card li"><h3>Početna po želji</h3><p>Šta gost prvo vidi: istaknuti proizvod, akcija dana, redosled, kategorije. Za svaki brend posebno.</p></div>
+      <div class="card lg"><h3>Način rada</h3><p>Preuzimanje, dostava ili oboje; zone i cene dostave; gotovina i/ili kartica.</p></div>
+      <div class="card li"><h3>Bez prodavnice aplikacija</h3><p>„Dodaj na početni ekran“ za goste i ikonica „Kuhinja“ za osoblje. Radi na svakom telefonu.</p></div>
+      <div class="card lg"><h3>Jedan sistem</h3><p>Isto poručivanje, ista kuhinja i ista obuka za oba brenda. Osoblje koje zna jedan, zna i drugi.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="dalje" class="alt">
+  <div class="wrap">
+    <p class="eyebrow">Sledeći korak</p>
+    <h2>Za nekoliko dana rade kod Vas</h2>
+    <div class="cards">
+      <div class="card"><h3>Šta prođemo zajedno</h3><p>Za oba brenda odjednom: meni, cene i fotografije, dostava i plaćanje. Dvadesetak minuta, kod Vas u lokalu ili telefonom, i sve podesimo po Vašem.</p></div>
+      <div class="card"><h3>Šta dobijate</h3><p>Dve aplikacije za goste u bojama svakog brenda · ceo meni · dostava i preuzimanje po Vašim pravilima · ekran kuhinje · praćenje porudžbine uživo · meni editor · statistika · obuka osoblja</p></div>
+    </div>
+    <div class="btns row">
+      <a class="btn btn-li" href="https://gajicmladen.github.io/leo-index/">Otvorite Leo Index</a>
+      <a class="btn btn-lg" href="https://gajicmladen.github.io/leos-gyros/">Otvorite Leo's Gyros</a>
+    </div>
+    <div class="btns row" style="margin-top:10px">
+      <a class="btn btn-line" href="https://gajicmladen.github.io/leo-index/kuhinja">Kuhinja · Leo Index</a>
+      <a class="btn btn-line" href="https://gajicmladen.github.io/leos-gyros/kuhinja">Kuhinja · Leo's Gyros</a>
+    </div>
+    <p style="margin-top:18px">Rado dođemo do Vas i pokažemo sve uživo na Vašem telefonu. Dovoljno je da odgovorite na poruku kojom ste dobili ovaj link.</p>
+  </div>
+</section>
+
+<footer><div class="wrap">Snimci ekrana su iz demo aplikacija napravljenih za Leo Index i Leo's Gyros; porudžbine i brojke na njima su probne.</div></footer>
+
+<div class="lb" id="lb"><button class="close" type="button">Zatvori ✕</button><img alt=""></div>
+<script>
+(function(){
+  var lb=document.getElementById('lb'),im=lb.querySelector('img');
+  document.querySelectorAll('img[data-zoom]').forEach(function(el){
+    el.addEventListener('click',function(){im.src=el.src;im.alt=el.alt;im.style.width=Math.max(window.innerWidth*1.8,1200)+'px';lb.classList.add('on');lb.scrollLeft=0;});
+  });
+  lb.querySelector('.close').addEventListener('click',function(){lb.classList.remove('on');im.src='';});
+})();
+</script>
+</body>
+</html>
